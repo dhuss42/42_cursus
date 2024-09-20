@@ -1,0 +1,29 @@
+# Ignore object and executable files
+*.o
+so_long
+tester.sh
+Tester_so_long.sh
+so_long copy.c
+infto.txt
+README.md
+helper.c
+
+# Ignore directory
+
+/maps_valid/
+/maps_err/
+/Ofiles/
+/tester_augustobecker/
+/archieve/
+/MLX42/
+/libft/
+/to_ignore/
+
+# Ignore temporary files
+*.log
+*.tmp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
