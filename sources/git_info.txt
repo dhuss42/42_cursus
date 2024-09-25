@@ -1,0 +1,84 @@
+basic git commands new
+
+    git init
+        create git repository
+
+    git rm --cached <file>
+        to remove from git add
+
+    git add .
+        add everything
+
+    git log --oneline
+        condensed version of git log 
+        the obtained commit ID can be used for checkout commit
+
+Undoing things
+    git checkout <commit ID>
+        show a specific commit in time
+        read only, altering the code will not be tracked
+        --> change back to main/master with
+            git checkout <main> or <master>
+
+    git revert <commit ID>
+        undo a particular commit
+            goes into text editor, don't change anything just :wq
+        commit is not removed, however a commit is added that states
+            that the particular commit has been reverted
+
+    git reset <commit ID> (be very careful)
+        permanently takes you back to a particular commit
+        working directory is not changed, files are just not commited
+            possible to readd everything
+        git reset <commit ID> --hard
+            changes also the working directory
+
+Branches
+    when we create a new feature, we want isolated environment to test it
+    if we like we merge it into the master branch
+    when two people are working on different features you can create two branches and merge them later
+
+    git branch <branch_name>
+        add a new branch
+
+    git branch -a
+        show all branches
+        * indicates the current branch
+
+    git checkout <branch_name>
+        switch branch
+
+    you can add and commit to the current branch without influencing other branches
+    if you switch to another branch the commited files will not be on that branch
+
+    git branch -D <branch_name>
+        delete branch
+
+    git checkout -b <branch_name>
+        creates a new branch and switches to it
+    
+Merging branches
+    be on the branch you want to merge into
+
+    git merge <branch_name>
+        merge specified branch into the current branch
+
+    conflicts
+        can emerge when two people edit the same file on different branches
+        and try to merge (don't commit on the main/master branch)
+
+github
+    git push <URL_of_repo> <branch_name>
+        pushes repository to github branch
+    
+    git remote add <alias> <URL>
+        default alias on github is "origin"
+        adds the alias to the local repo
+        --> git push <alias> <branch_name>
+            now its not necessary to use the entire URL
+    
+    if you git clone the repository from github then there is no need for seting up the alias
+
+    git pull <alias> <branch_name>
+        make the local files up date with whats in the remote repository
+        

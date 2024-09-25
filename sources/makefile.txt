@@ -1,0 +1,52 @@
+Rules
+    define how, when, what files and commands are used the achieve the final executable
+    Rules have the following Syntax
+
+        target: prerequisite-1 prerequisite-2 prerequisite-3 ....
+            command-1
+            command-2
+            command-3
+        
+        A target is the name of a rule
+        Rules can rely on dependencies that must be fulfilled before execution
+            --> prerequisites
+        after the prerequisitesare fulfilled the rule can execute its recipe - a collection of commands.
+
+Variables
+    naming convention for variables is uppercase to distinguish them from
+    makefile Rules
+    examples:
+        FIRST_NAME = David
+        LAST_NAME = HUSS
+        FULL_NAME = $(FIRST_NAME) $(LAST_NAME)
+    to access the values of the variables use $(FIRST_NAME)
+
+    example
+        OBJS = hello.o bye.o highfive.o
+        all: $(OBJS)
+            cc main.c $(OBJS)
+        %.o: %.c
+            cc -c $<
+
+        1. for the rule all, the OBJS variable is expanded to (hello.o bye.o highfive.o)
+        creating multiple dependencies
+        2. hello.o does not exist which forces the makefile to look for a rule
+            %.o: %.c
+                cc -c $<
+            
+            % means any dependency that ends on .o can be generated here and needs a corresponding .c with the same prefix
+            $< handles strings with variable values
+
+            hello.o: hello.c
+	            cc -c hello.c
+
+            bye.o: bye.c
+	            cc -c bye.c
+
+            highfive.o: highfive.c
+	            cc -c highfive.c
+
+        3. After all dependencies have been generated the all rule can execute its recipe
+        Expanded:
+            all: hello.o bye.o highfive.o
+	            cc main.c hello.o bye.o highfive.o
