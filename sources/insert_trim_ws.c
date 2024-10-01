@@ -5,6 +5,8 @@
 #include "libft/libft.h"
 #include <stdbool.h>
 
+char    **split_space_quotes(char *input);
+
 typedef struct s_trim
 {
 	size_t	i;
@@ -97,7 +99,7 @@ void	handle_special(t_trim *trim, char *input)
 		}
 }
 
-void	populate_str(t_trim *trim, char *input)
+void	populate_trim_str(t_trim *trim, char *input)
 {
 	trim->j = 0;
 	trim->i = 0;
@@ -137,7 +139,7 @@ char *trim_spaces(char *input)
 	trim.res = ft_calloc(sizeof(char), (trim.len + 1)); // calculate len properly?
 	if (!trim.res)
 		return (NULL);
-	populate_str(&trim, input);
+	populate_trim_str(&trim, input);
 	printf("len: %zu\n", ft_strlen(trim.res));
 	return (trim.res);
 }
@@ -147,6 +149,8 @@ int	main()
 	char	*input;
 	char	*trim_inpt;
 	char	*res;
+	char	**tokens = NULL;
+	int		i = 0;
 
 	input = readline("Type Shit: ");
 	if(!input)
@@ -154,6 +158,13 @@ int	main()
 	trim_inpt = ft_strtrim(input, " \n\t");
 	res = trim_spaces(trim_inpt);
 	printf("%s\n", res);
+	tokens = split_space_quotes(res);
+	printf("TEST\n");
+	while (tokens[i] != NULL)
+    {
+        printf("[%d] %s\n", i, tokens[i]);
+        i++;
+    }
 	free(input);
 	free(trim_inpt);
 	free(res);
