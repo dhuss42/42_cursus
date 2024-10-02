@@ -1,22 +1,18 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include "libft/libft.h"
-#include <stdbool.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   insert_trim_ws.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dhuss <dhuss@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/02 11:42:31 by dhuss             #+#    #+#             */
+/*   Updated: 2024/10/02 17:29:37 by dhuss            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-char    **split_space_quotes(char *input);
+#include "minishell.h"
 
-typedef struct s_trim
-{
-	size_t	i;
-	size_t	j;
-	size_t	len;
-	bool	isspace;
-	char	*res;
-} t_trim;
-
-bool	isspecial(char input)
+bool	is_special(char input)
 {
 	char *special;
 
@@ -30,7 +26,7 @@ bool	isspecial(char input)
 	return (false);
 }
 
-bool	iswspace(char input)
+bool	is_wspace(char input)
 {
 	char	*ws;
 
@@ -48,11 +44,11 @@ void handle_quotes(t_trim *trim, char *input)
 {
 	char quote;
 
-	if (trim->j > 0 && (!iswspace(trim->res[trim->j - 1]))) // if not the beginning of res and the prior space is not ws
+	if (trim->j > 0 && (!is_wspace(trim->res[trim->j - 1]))) // if not the beginning of res and the prior space is not ws
 		trim->res[trim->j++] = ' ';
 	quote = input[trim->i];
 	trim->res[trim->j++] = input[trim->i++];
-	while ((input[trim->i] != '\0') && (input[trim->i] != quote)) 
+	while ((input[trim->i] != '\0') && (input[trim->i] != quote))
 		trim->res[trim->j++] = input[trim->i++];
 	if (input[trim->i] == quote)
 	{
@@ -65,7 +61,7 @@ void handle_quotes(t_trim *trim, char *input)
 
 void	handle_op(t_trim *trim, char *input)
 {
-	if (trim->j > 0 && (!iswspace(trim->res[trim->j - 1]))) // if not the beginning of res and the prior space is not ws
+	if (trim->j > 0 && (!is_wspace(trim->res[trim->j - 1]))) // if not the beginning of res and the prior space is not ws
 		trim->res[(trim->j)++] = ' '; // insert ws if there is none
 	trim->res[(trim->j)++] = input[trim->i]; // copying operator (not increasing i because of increase in function calling)
 	if ((input[trim->i] == '<' && input[trim->i + 1] == '<') || (input[trim->i] == '>' && input[trim->i + 1] == '>'))
@@ -106,9 +102,9 @@ void	populate_trim_str(t_trim *trim, char *input)
 	trim->isspace = false; //flag to false
 	while (trim->i < trim->len)
 	{
-		if (isspecial(input[trim->i]))
+		if (is_special(input[trim->i]))
 			handle_special(trim, input);
-		else if (iswspace(input[trim->i])) // checks if there is a ws in input and sets it to one ws
+		else if (is_wspace(input[trim->i])) // checks if there is a ws in input and sets it to one ws
 		{
 			if (!trim->isspace && trim->j > 0) // checks if isspace is false
 			{
@@ -133,14 +129,16 @@ char *trim_spaces(char *input)
 
 	if (!input)
 		return (NULL);
+	trim.res = NULL;
 	trim_inpt = ft_strtrim(input, " \n\t");
-	trim.len = ft_strlen(trim_inpt);
-	printf("len: %zu\n", trim.len);
-	trim.res = ft_calloc(sizeof(char), (trim.len + 1)); // calculate len properly?
+	trim.len = ft_strlen(trim_inpt); // calculate len properly?
+
+	// trim.res = ft_calloc(sizeof(char), (trim.len + 1));
+	trim.res = ft_calloc(sizeof(char), (7000 + 1));
 	if (!trim.res)
 		return (NULL);
-	populate_trim_str(&trim, input);
-	printf("len: %zu\n", ft_strlen(trim.res));
+	populate_trim_str(&trim, trim_inpt);
+	free(trim_inpt);
 	return (trim.res);
 }
 
@@ -150,23 +148,29 @@ int	main()
 	char	*trim_inpt;
 	char	*res;
 	char	**tokens = NULL;
-	int		i = 0;
+	t_list	*list = NULL;
+	// int		i = 0;
 
 	input = readline("Type Shit: ");
 	if(!input)
 		return (1);
-	trim_inpt = ft_strtrim(input, " \n\t");
-	res = trim_spaces(trim_inpt);
-	printf("%s\n", res);
+
+	trim_inpt = trim_spaces(input);
+	res = ft_strtrim(trim_inpt, " \n\t");
+
 	tokens = split_space_quotes(res);
-	printf("TEST\n");
-	while (tokens[i] != NULL)
-    {
-        printf("[%d] %s\n", i, tokens[i]);
-        i++;
-    }
+
+	list = tokeniser(tokens);
+
+	printf("\033[32mTOKEN LINKED LIST\n");
+	print_token_list(list);
+	printf("\033[0m");
 	free(input);
 	free(trim_inpt);
 	free(res);
+	ft_lstclear(&list, free_token);
 	return (0);
 }
+
+
+//        HELLO << this isa$PATH"CHECK .   JESUS" . halleluija | <>>>'shiti '
